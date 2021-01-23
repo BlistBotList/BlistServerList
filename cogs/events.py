@@ -1,9 +1,10 @@
 import datetime
+import random
 import sys
 
 import config
 import discord
-from discord.ext import commands, flags
+from discord.ext import commands, flags, tasks
 
 
 class Events(commands.Cog):
@@ -12,9 +13,21 @@ class Events(commands.Cog):
         self.bot = bot
         self.old_on_error = bot.on_error
         bot.on_error = self.new_on_error
+        self.change_status.start()
 
     def cog_unload(self):
         self.bot.on_error = self.old_on_error
+
+    @tasks.loop(minutes=1)
+    async def change_status(self):
+        unpublished = await self.bot.pool.fetchval("SELECT COUNT(*) FROM main_site_server WHERE published = False")
+        published = await self.bot.pool.fetchval("SELECT COUNT(*) FROM main_site_server WHERE published = True")
+        options = [
+            f"with {published} published servers",
+            f"with {unpublished} un-published servers",
+            f"with {str(len(set(self.bot.get_all_members())))} total users"
+        ]
+        await self.bot.change_presence(activity=discord.Game(name=random.choice(options)))
 
     @property
     def error_webhook(self):

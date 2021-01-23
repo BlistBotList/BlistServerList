@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+import os
 
 class General(commands.Cog):
 
@@ -21,6 +22,13 @@ class General(commands.Cog):
     @commands.command()
     async def invite(self, ctx):
         await ctx.send(discord.utils.oauth_url(self.bot.user.id))
+
+
+    @commands.is_owner()
+    @commands.command()
+    async def restart(self, ctx):
+        await ctx.send("Restarting")
+        os.system("systemctl restart blists")
 
 
 def setup(bot):
