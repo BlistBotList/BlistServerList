@@ -100,7 +100,7 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        db_check = await self.bot.pool.fetch("SELECT * FROM main_site_user WHERE userid = $1", guild.owner.id)
+        db_check = await self.bot.pool.fetch("SELECT * FROM main_site_user WHERE id = $1", guild.owner.id)
         if db_check:
             managers = " ".join(
                 [str(x.id) for x in guild.members if x.guild_permissions.manage_guild and not x.bot])
