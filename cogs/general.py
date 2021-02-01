@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 import os
 import asyncio
+import re
 
 class General(commands.Cog):
 
