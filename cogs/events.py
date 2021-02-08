@@ -101,6 +101,11 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         db_check = await self.bot.pool.fetch("SELECT * FROM main_site_user WHERE id = $1", guild.owner.id)
+        try:
+            premium = db_check[0]["premium"]
+        except IndexError:
+            premium = False
+            
         managers = " ".join(
             [str(x.id) for x in guild.members if x.guild_permissions.manage_guild and not x.bot])
         await self.bot.pool.execute("INSERT INTO main_site_server (name, id, main_owner, website, short_description, invite_url, tags, monthly_votes, total_votes, vanity_url, member_count, added, webhook_url, joins, page_views, donate_url, card_background, premium, icon_hash, published, archived, managers) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)", guild.name, guild.id, guild.owner.id, "", "", "", [""], 0, 0, "", len(guild.members), datetime.datetime.utcnow(), "", 0, 0, "", "", db_check[0]["premium"], guild.icon, False, False, managers)
