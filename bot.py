@@ -2,7 +2,6 @@ import argparse
 import datetime
 import os
 import traceback
-from math import e
 from typing import Union
 
 import aiohttp
